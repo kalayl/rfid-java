@@ -1,17 +1,15 @@
 package com.bungholes.rfid.reader.sirit;
 
+import com.bungholes.rfid.messaging.TagReadingDispatcher;
+import com.bungholes.rfid.messaging.TagReading;
 import com.bungholes.rfid.reader.RfidConnectionException;
 import com.bungholes.rfid.reader.RfidReaderException;
 import com.bungholes.rfid.reader.util.PhaseUtils;
-import com.bungholes.rfid.tag.TagReading;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 import static com.bungholes.rfid.reader.sirit.BasicIntegrationTest.configuration;
-import static com.google.common.collect.Lists.newArrayList;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class SiritEventManagerTest {
@@ -26,16 +24,14 @@ public class SiritEventManagerTest {
 
         connection.connect();
 
-//        String eventId = eventManager.register("event.tag.report", new IEventListener() {
-//            @Override
-//            public void EventFound(Object o, EventInfo eventInfo) {
-//                String tagID = eventInfo.getParameter(EventInfo.EVENT_TAG_ARRIVE_PARAMS.TAG_ID);
-//                LOGGER.debug("Tag Id {} ", tagID);
-//            }
-//        });
 
-        List<TagReading> readings = newArrayList();
-        String eventId = eventManager.register("event.tag.report", new SiritTagReader(readings, new PhaseUtils()));
+        String eventId = eventManager.register("event.tag.report", new SiritTagReader(new TagReadingDispatcher() {
+            @Override
+            public void dispatch(TagReading tagReading) {
+                // TODO
+                assertThat(tagReading).isNotNull();
+            }
+        }, new PhaseUtils()));
 
         connection.activate();
 
@@ -44,7 +40,5 @@ public class SiritEventManagerTest {
 
         connection.standby();
         connection.close();
-
-        assertThat(readings.size()).isGreaterThan(0);
     }
 }

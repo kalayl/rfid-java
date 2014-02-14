@@ -1,6 +1,8 @@
-package com.bungholes.rfid.tag;
+package com.bungholes.rfid.messaging;
 
-public class TagReading {
+import java.io.Serializable;
+
+public class TagReading implements Serializable {
 
     private final String tagid;
     private final String antenna;

@@ -13,6 +13,7 @@
 
     <modules>
         <module>rfid-master-pom</module>
+        <module>rfid-messaging</module>
         <module>rfid-reader</module>
         <module>rfid-reader-sirit</module>
         <module>rfid-server</module>
