@@ -25,18 +25,24 @@ public class AkkaTagReadingDispatcher implements TagReadingDispatcher {
     }
 
     public void dispatch(TagReading tagReading) {
-        ActorRef actor = getActor(tagReading.getTagid());
-        actor.tell(tagReading, ActorRef.noSender());
+        String tid = tagReading.getTid();
+
+        if (tid == null) {
+            //LOGGER.warn("Discarding reading with null tid {}", tagReading);
+        } else {
+            ActorRef actor = getActor("tagReading" + tid);
+            actor.tell(tagReading, ActorRef.noSender());
+        }
     }
 
-    private ActorRef getActor(String tagId) {
-        ActorRef actor = actors.get(tagId);
+    private ActorRef getActor(String name) {
+        ActorRef actor = actors.get(name);
 
         if (actor == null) {
-            LOGGER.debug("Creating new Actor for tagId {}", tagId);
+            LOGGER.debug("Creating new Actor for name {}", name);
 
-            actor = actorSystem.actorOf(Props.create(TagReadingActor.class), tagId);
-            actors.put(tagId, actor);
+            actor = actorSystem.actorOf(Props.create(TagReadingActor.class), name);
+            actors.put(name, actor);
         }
 
         return actor;

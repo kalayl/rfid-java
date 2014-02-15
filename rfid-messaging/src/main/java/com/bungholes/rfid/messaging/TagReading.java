@@ -4,24 +4,26 @@ import java.io.Serializable;
 
 public class TagReading implements Serializable {
 
-    private final String tagid;
+    private final String tagId;
     private final String antenna;
     private final float phaseAngle;
     private final String frequency;
     private final String rssi;
     private final String time;
+    private final String tid;
 
-    public TagReading(String tagid, String antenna, float phaseAngle, String frequency, String rssi, String time) {
-        this.tagid = tagid;
+    public TagReading(String tagId, String antenna, float phaseAngle, String frequency, String rssi, String time, String tid) {
+        this.tagId = tagId;
         this.antenna = antenna;
         this.phaseAngle = phaseAngle;
         this.frequency = frequency;
         this.rssi = rssi;
         this.time = time;
+        this.tid = tid;
     }
 
-    public String getTagid() {
-        return tagid;
+    public String getTagId() {
+        return tagId;
     }
 
     public String getAntenna() {
@@ -44,6 +46,8 @@ public class TagReading implements Serializable {
         return time;
     }
 
+    public String getTid() { return tid; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,7 +59,8 @@ public class TagReading implements Serializable {
         if (antenna != null ? !antenna.equals(that.antenna) : that.antenna != null) return false;
         if (frequency != null ? !frequency.equals(that.frequency) : that.frequency != null) return false;
         if (rssi != null ? !rssi.equals(that.rssi) : that.rssi != null) return false;
-        if (tagid != null ? !tagid.equals(that.tagid) : that.tagid != null) return false;
+        if (tagId != null ? !tagId.equals(that.tagId) : that.tagId != null) return false;
+        if (tid != null ? !tid.equals(that.tid) : that.tid != null) return false;
         if (time != null ? !time.equals(that.time) : that.time != null) return false;
 
         return true;
@@ -63,21 +68,23 @@ public class TagReading implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = tagid != null ? tagid.hashCode() : 0;
+        int result = tagId != null ? tagId.hashCode() : 0;
         result = 31 * result + (antenna != null ? antenna.hashCode() : 0);
         result = 31 * result + (phaseAngle != +0.0f ? Float.floatToIntBits(phaseAngle) : 0);
         result = 31 * result + (frequency != null ? frequency.hashCode() : 0);
         result = 31 * result + (rssi != null ? rssi.hashCode() : 0);
         result = 31 * result + (time != null ? time.hashCode() : 0);
+        result = 31 * result + (tid != null ? tid.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "TagReading{" +
-                "tagid='" + tagid + '\'' +
+                "tagId='" + tagId + '\'' +
+                ", tid='" + tid + '\'' +
                 ", antenna='" + antenna + '\'' +
-                ", phaseAngle='" + phaseAngle + '\'' +
+                ", phaseAngle=" + phaseAngle +
                 ", frequency='" + frequency + '\'' +
                 ", rssi='" + rssi + '\'' +
                 ", time='" + time + '\'' +

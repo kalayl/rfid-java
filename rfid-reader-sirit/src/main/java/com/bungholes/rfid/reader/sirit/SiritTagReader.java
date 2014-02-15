@@ -30,9 +30,11 @@ public class SiritTagReader implements IEventListener {
             String phase = eventInfo.getParameter(EventInfo.EVENT_TAG_REPORT_PARAMS.PHASE);
             String frequency = eventInfo.getParameter(EventInfo.EVENT_TAG_REPORT_PARAMS.FREQUENCY);
             String rssi = eventInfo.getParameter(EventInfo.EVENT_TAG_REPORT_PARAMS.RSSI);
+            String tid = eventInfo.getParameter(EventInfo.EVENT_TAG_REPORT_PARAMS.TID);
+
             float phaseAngle = phaseUtils.calculatePhaseAngle(phase);
 
-            TagReading reading = new TagReading(tagId, antenna, phaseAngle, frequency, rssi, time);
+            TagReading reading = new TagReading(tagId, antenna, phaseAngle, frequency, rssi, time, tid);
             //LOGGER.debug("TagReading {} ", reading);
             if (tagId != null)
             {
