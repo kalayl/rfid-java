@@ -1,7 +1,7 @@
 package com.bungholes.rfid.server;
 
 import akka.actor.ActorSystem;
-import com.bungholes.rfid.akka.AkkaTagReadingDispatcher;
+import com.bungholes.rfid.messaging.akka.AkkaTagReadingDispatcher;
 import com.bungholes.rfid.messaging.TagReadingDispatcher;
 import com.bungholes.rfid.reader.RfidReaderConnection;
 import com.bungholes.rfid.reader.sirit.SiritConnectionDetails;

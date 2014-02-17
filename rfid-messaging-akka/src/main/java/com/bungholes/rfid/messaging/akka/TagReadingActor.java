@@ -1,4 +1,4 @@
-package com.bungholes.rfid.akka;
+package com.bungholes.rfid.messaging.akka;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static com.bungholes.rfid.akka.PhaseCalculations.calculatePosition;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class TagReadingActor extends UntypedActor {
@@ -56,7 +55,7 @@ public class TagReadingActor extends UntypedActor {
     }
 
     private TagPosition calculateTagPosition() {
-        double position = calculatePosition(antenna1Archive, antenna2Archive);
+        double position = PhaseCalculations.calculatePosition(antenna1Archive, antenna2Archive);
 
         return new TagPosition(tagId, tid, position);
     }

@@ -1,4 +1,4 @@
-package com.bungholes.rfid.akka;
+package com.bungholes.rfid.messaging.akka;
 
 import com.bungholes.rfid.messages.TagReading;
 import com.google.common.collect.ImmutableList;

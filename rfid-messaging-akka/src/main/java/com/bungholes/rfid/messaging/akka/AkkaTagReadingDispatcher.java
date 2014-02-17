@@ -1,4 +1,4 @@
-package com.bungholes.rfid.akka;
+package com.bungholes.rfid.messaging.akka;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;

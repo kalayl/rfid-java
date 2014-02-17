@@ -1,4 +1,4 @@
-package com.bungholes.rfid.akka;
+package com.bungholes.rfid.messaging.akka;
 
 import akka.actor.UntypedActor;
 import com.bungholes.rfid.messages.TagPosition;

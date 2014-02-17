@@ -57,6 +57,14 @@ public class TagReading implements Serializable {
 
     public String getTid() { return tid; }
 
+    public static Ordering<TagReading> dateOrdering() {
+        return Ordering.natural().onResultOf(new Function<TagReading, Date>() {
+            public Date apply(TagReading from) {
+                return from.getTime();
+            }
+        });
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,11 +108,4 @@ public class TagReading implements Serializable {
                 '}';
     }
 
-    public static Ordering<TagReading> dateOrdering() {
-        return Ordering.natural().onResultOf(new Function<TagReading, Date>() {
-            public Date apply(TagReading from) {
-                return from.getTime();
-            }
-        });
-    }
 }
