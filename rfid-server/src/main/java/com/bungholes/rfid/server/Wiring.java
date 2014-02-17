@@ -24,6 +24,8 @@ public class Wiring {
 
     private String actorSystemName = "rfid";
 
+    public static final String EVENT_NAME = "event.tag.report";
+
     private SiritConnection connection;
     private SiritEventSubscriptionManager eventManager;
     private SiritTagReportEventListener tagReader;
@@ -52,7 +54,7 @@ public class Wiring {
         return connection;
     }
 
-    public SiritTagReportEventListener getTagReader() {
+    public SiritTagReportEventListener getSiritTagReportEventListener() {
         return tagReader;
     }
 }

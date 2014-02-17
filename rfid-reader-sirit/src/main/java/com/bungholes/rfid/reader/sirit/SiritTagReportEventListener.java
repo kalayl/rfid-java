@@ -1,7 +1,7 @@
 package com.bungholes.rfid.reader.sirit;
 
 import com.bungholes.rfid.messaging.TagReadingDispatcher;
-import com.bungholes.rfid.messaging.TagReading;
+import com.bungholes.rfid.messages.TagReading;
 import com.sirit.driver.IEventListener;
 import com.sirit.mapping.EventInfo;
 import org.slf4j.Logger;

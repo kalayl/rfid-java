@@ -1,7 +1,7 @@
 package com.bungholes.rfid.akka;
 
 import akka.actor.UntypedActor;
-import com.bungholes.rfid.messaging.TagPosition;
+import com.bungholes.rfid.messages.TagPosition;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.EvictingQueue;
@@ -63,11 +63,7 @@ public class TagPositionActor extends UntypedActor {
     private void saveTidAndTagId(TagPosition tagPosition) {
         if (tid == null) {
             tid = tagPosition.getTid();
-        }
-
-        if (tagId == null) {
             tagId = tagPosition.getTagId();
         }
-
     }
 }

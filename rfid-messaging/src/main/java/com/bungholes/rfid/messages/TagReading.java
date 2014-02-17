@@ -1,4 +1,4 @@
-package com.bungholes.rfid.messaging;
+package com.bungholes.rfid.messages;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Ordering;

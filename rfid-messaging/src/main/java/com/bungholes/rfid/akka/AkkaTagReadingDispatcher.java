@@ -3,7 +3,7 @@ package com.bungholes.rfid.akka;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import com.bungholes.rfid.messaging.TagReading;
+import com.bungholes.rfid.messages.TagReading;
 import com.bungholes.rfid.messaging.TagReadingDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

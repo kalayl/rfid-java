@@ -1,4 +1,4 @@
-package com.bungholes.rfid.messaging;
+package com.bungholes.rfid.messages;
 
 import java.io.Serializable;
 

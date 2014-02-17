@@ -8,6 +8,8 @@ import com.bungholes.rfid.reader.sirit.SiritTagReportEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.bungholes.rfid.server.Wiring.EVENT_NAME;
+
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
@@ -15,21 +17,20 @@ public class Main {
 
     private final RfidReaderConnection connection;
     private final SiritEventSubscriptionManager eventManager;
+    private SiritTagReportEventListener tagReader;
 
     private String eventId = null;
-    private String EVENT_NAME = "event.tag.report";
 
     public Main() {
         wiring = new Wiring();
 
         connection = wiring.getConnection();
         eventManager = wiring.getEventManager();
+        tagReader = wiring.getSiritTagReportEventListener();
     }
 
     private void run() throws RfidReaderException, RfidConnectionException, InterruptedException {
         try {
-            SiritTagReportEventListener tagReader = wiring.getTagReader();
-
             connection.connect();
             eventId = eventManager.register(EVENT_NAME, tagReader);
             connection.activate();

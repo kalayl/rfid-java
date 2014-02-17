@@ -1,7 +1,7 @@
 package com.bungholes.rfid.reader.sirit;
 
 import com.bungholes.rfid.messaging.TagReadingDispatcher;
-import com.bungholes.rfid.messaging.TagReading;
+import com.bungholes.rfid.messages.TagReading;
 import com.bungholes.rfid.reader.RfidConnectionException;
 import com.bungholes.rfid.reader.RfidReaderException;
 import org.junit.Test;

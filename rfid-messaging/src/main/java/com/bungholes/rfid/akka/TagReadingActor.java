@@ -3,17 +3,14 @@ package com.bungholes.rfid.akka;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import com.bungholes.rfid.messaging.TagPosition;
-import com.bungholes.rfid.messaging.TagReading;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.math.DoubleMath;
+import com.bungholes.rfid.messages.TagPosition;
+import com.bungholes.rfid.messages.TagReading;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static com.bungholes.rfid.messaging.TagReading.dateOrdering;
+import static com.bungholes.rfid.akka.PhaseCalculations.calculatePosition;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class TagReadingActor extends UntypedActor {
@@ -93,13 +90,7 @@ public class TagReadingActor extends UntypedActor {
     private void saveTidAndTagId(TagReading tagReading) {
         if (tid == null) {
             tid = tagReading.getTid();
-        }
-
-        if (tagId == null) {
             tagId = tagReading.getTagId();
-        }
-
-        if (tagPositionActorName == null) {
             tagPositionActorName = "tagPosition-" + tid;
         }
     }
@@ -112,64 +103,4 @@ public class TagReadingActor extends UntypedActor {
         }
     }
 
-    private double calculatePosition(List<TagReading> antenna1, List<TagReading> antenna2) {
-        List<Float> phaseDifferences = calculatePhaseDifferencesBetweenAntennas(antenna1, antenna2);
-        double phaseDifferenceMean = DoubleMath.mean(phaseDifferences);
-
-        return relativePositionFromPhaseDifferenceMean(phaseDifferenceMean);
-    }
-
-    private double relativePositionFromPhaseDifferenceMean(double phaseDifferenceMean) {
-        ///return Math.floor((phaseDifferenceMean + 90) * 7.6);
-        return phaseDifferenceMean + 90;
-    }
-
-    private List<Float> calculatePhaseDifferencesBetweenAntennas(
-            List<TagReading> antenna1,
-            List<TagReading> antenna2) {
-
-        ImmutableList<TagReading> sortedAntenna1 = ImmutableSortedSet.orderedBy(dateOrdering())
-                .addAll(antenna1)
-                .build()
-                .asList();
-
-        ImmutableList<TagReading> sortedAntenna2 = ImmutableSortedSet.orderedBy(dateOrdering())
-                .addAll(antenna2)
-                .build()
-                .asList();
-
-        List<Float> phaseDifferences = calculatePhaseDifferencesBetweenSortedLists(sortedAntenna1, sortedAntenna2);
-
-        return phaseDifferences;
-    }
-
-    private List<Float> calculatePhaseDifferencesBetweenSortedLists(
-            List<TagReading> antenna1Readings,
-            List<TagReading> antenna2Readings) {
-
-        List<Float> phaseDifferenceResults = newArrayList();
-
-        for (int i = 0; i < antenna1Readings.size(); i++) {
-            if (i < antenna2Readings.size() && i < antenna2Readings.size()) {
-                TagReading tagReading1 = antenna1Readings.get(i);
-                TagReading tagReading2 = antenna2Readings.get(i);
-
-                float phaseDifference = calculatePhaseDifferenceBetweenTwoReadings(tagReading1, tagReading2);
-
-                phaseDifferenceResults.add(phaseDifference);
-            }
-        }
-
-        return phaseDifferenceResults;
-    }
-
-    private float calculatePhaseDifferenceBetweenTwoReadings(TagReading tagReading1, TagReading tagReading2) {
-        float phaseDifference = tagReading2.getPhaseAngle() - tagReading1.getPhaseAngle();
-
-        if (Math.abs(phaseDifference) > 90) {
-            phaseDifference = phaseDifference - ( 180 * Math.signum(phaseDifference));
-        }
-
-        return phaseDifference;
-    }
 }
