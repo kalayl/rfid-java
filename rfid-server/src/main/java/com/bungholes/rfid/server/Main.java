@@ -1,10 +1,10 @@
 package com.bungholes.rfid.server;
 
 import com.bungholes.rfid.reader.RfidConnectionException;
+import com.bungholes.rfid.reader.RfidReaderConnection;
 import com.bungholes.rfid.reader.RfidReaderException;
-import com.bungholes.rfid.reader.sirit.SiritConnection;
-import com.bungholes.rfid.reader.sirit.SiritEventManager;
-import com.bungholes.rfid.reader.sirit.SiritTagReader;
+import com.bungholes.rfid.reader.sirit.SiritEventSubscriptionManager;
+import com.bungholes.rfid.reader.sirit.SiritTagReportEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +13,8 @@ public class Main {
 
     private Wiring wiring;
 
-    private final SiritConnection connection;
-    private final SiritEventManager eventManager;
+    private final RfidReaderConnection connection;
+    private final SiritEventSubscriptionManager eventManager;
 
     private String eventId = null;
     private String EVENT_NAME = "event.tag.report";
@@ -28,7 +28,7 @@ public class Main {
 
     private void run() throws RfidReaderException, RfidConnectionException, InterruptedException {
         try {
-            SiritTagReader tagReader = wiring.getTagReader();
+            SiritTagReportEventListener tagReader = wiring.getTagReader();
 
             connection.connect();
             eventId = eventManager.register(EVENT_NAME, tagReader);

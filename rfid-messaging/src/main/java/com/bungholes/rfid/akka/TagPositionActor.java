@@ -44,7 +44,8 @@ public class TagPositionActor extends UntypedActor {
 
             DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(doubles);
 
-            LOGGER.debug("{} mean:{}, stddev: {}", tid, descriptiveStatistics.getMean(), descriptiveStatistics.getStandardDeviation());
+            LOGGER.debug("{} mean:{}, stddev: {}",
+                    tid, descriptiveStatistics.getMean(), descriptiveStatistics.getStandardDeviation());
         }
     }
 
@@ -55,6 +56,7 @@ public class TagPositionActor extends UntypedActor {
                 return tagPosition.getRelativePosition();
             }
         });
+
         return ArrayUtils.toPrimitive(positions.toArray(new Double[positions.size()]));
     }
 

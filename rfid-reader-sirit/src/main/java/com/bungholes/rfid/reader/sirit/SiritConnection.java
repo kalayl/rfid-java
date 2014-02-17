@@ -1,6 +1,5 @@
 package com.bungholes.rfid.reader.sirit;
 
-import com.bungholes.rfid.reader.ConnectionDetails;
 import com.bungholes.rfid.reader.RfidConnectionException;
 import com.bungholes.rfid.reader.RfidReaderConnection;
 import com.sirit.data.DataManager;
@@ -14,16 +13,16 @@ import org.slf4j.LoggerFactory;
 
 public class SiritConnection implements RfidReaderConnection {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SiritEventManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SiritEventSubscriptionManager.class);
 
-    private final ConnectionDetails connectionDetails;
+    private final SiritConnectionDetails siritConnectionDetails;
 
     private DataManager dataManager;
     private ReaderManager readerManager;
     private SetupManager setupManager;
 
-    public SiritConnection(ConnectionDetails connectionDetails) {
-        this.connectionDetails = connectionDetails;
+    public SiritConnection(SiritConnectionDetails siritConnectionDetails) {
+        this.siritConnectionDetails = siritConnectionDetails;
     }
 
     @Override
@@ -31,7 +30,7 @@ public class SiritConnection implements RfidReaderConnection {
 
         // Open a connection to the reader
         try {
-            dataManager = new DataManager(DataManager.ConnectionTypes.SOCKET, connectionDetails.getIp(), 0);
+            dataManager = new DataManager(DataManager.ConnectionTypes.SOCKET, siritConnectionDetails.getIp(), 0);
             dataManager.open();
         } catch (ConnectionException e) {
             throw new RfidConnectionException(e);
@@ -41,7 +40,7 @@ public class SiritConnection implements RfidReaderConnection {
 
         // Login as administrator
         readerManager = new ReaderManager(dataManager);
-        if (!readerManager.login(connectionDetails.getLogin(), connectionDetails.getPassword()))
+        if (!readerManager.login(siritConnectionDetails.getLogin(), siritConnectionDetails.getPassword()))
         {
             throw new RfidConnectionException("Login attempt failed: " + readerManager.getLastErrorMessage());
         }
@@ -101,8 +100,8 @@ public class SiritConnection implements RfidReaderConnection {
         return readerManager.whoAmI();
     }
 
-    public ConnectionDetails getConnectionDetails() {
-        return connectionDetails;
+    public SiritConnectionDetails getSiritConnectionDetails() {
+        return siritConnectionDetails;
     }
 
     public DataManager getDataManager() {

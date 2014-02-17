@@ -1,6 +1,5 @@
 package com.bungholes.rfid.reader.sirit;
 
-import com.bungholes.rfid.reader.ConnectionDetails;
 import com.sirit.data.DataManager;
 import com.sirit.driver.IEventListener;
 import com.sirit.mapping.EventInfo;
@@ -19,7 +18,7 @@ public class BasicIntegrationTest implements IEventListener
     public static String LOGIN = "admin";
     public static String PASSWORD = "readeradmin";
 
-    public static final ConnectionDetails configuration = new ConnectionDetails(IP_ADDRESS, LOGIN, PASSWORD);
+    public static final SiritConnectionDetails configuration = new SiritConnectionDetails(IP_ADDRESS, LOGIN, PASSWORD);
 
     @Test
     public void testBasicConnection()

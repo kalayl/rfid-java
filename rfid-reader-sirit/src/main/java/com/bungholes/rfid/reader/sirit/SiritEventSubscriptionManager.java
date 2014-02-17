@@ -7,12 +7,12 @@ import com.sirit.driver.IEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SiritEventManager {
+public class SiritEventSubscriptionManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SiritEventManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SiritEventSubscriptionManager.class);
     private SiritConnection connection;
 
-    public SiritEventManager(SiritConnection connection) {
+    public SiritEventSubscriptionManager(SiritConnection connection) {
         this.connection = connection;
     }
 

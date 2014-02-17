@@ -1,6 +1,11 @@
 package com.bungholes.rfid.messaging;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Ordering;
+
+import javax.xml.bind.DatatypeConverter;
 import java.io.Serializable;
+import java.util.Date;
 
 public class TagReading implements Serializable {
 
@@ -9,7 +14,7 @@ public class TagReading implements Serializable {
     private final float phaseAngle;
     private final String frequency;
     private final String rssi;
-    private final String time;
+    private final Date time;
     private final String tid;
 
     public TagReading(String tagId, String antenna, float phaseAngle, String frequency, String rssi, String time, String tid) {
@@ -18,8 +23,12 @@ public class TagReading implements Serializable {
         this.phaseAngle = phaseAngle;
         this.frequency = frequency;
         this.rssi = rssi;
-        this.time = time;
+        this.time = determineTime(time);
         this.tid = tid;
+    }
+
+    private Date determineTime(String time) {
+        return DatatypeConverter.parseDateTime(time).getTime();
     }
 
     public String getTagId() {
@@ -42,7 +51,7 @@ public class TagReading implements Serializable {
         return rssi;
     }
 
-    public String getTime() {
+    public Date getTime() {
         return time;
     }
 
@@ -89,5 +98,13 @@ public class TagReading implements Serializable {
                 ", rssi='" + rssi + '\'' +
                 ", time='" + time + '\'' +
                 '}';
+    }
+
+    public static Ordering<TagReading> dateOrdering() {
+        return Ordering.natural().onResultOf(new Function<TagReading, Date>() {
+            public Date apply(TagReading from) {
+                return from.getTime();
+            }
+        });
     }
 }

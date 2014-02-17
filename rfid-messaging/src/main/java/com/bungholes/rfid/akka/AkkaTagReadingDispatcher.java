@@ -30,7 +30,7 @@ public class AkkaTagReadingDispatcher implements TagReadingDispatcher {
         if (tid == null) {
             //LOGGER.warn("Discarding reading with null tid {}", tagReading);
         } else {
-            ActorRef actor = getActor("tagReading" + tid);
+            ActorRef actor = getActor("tagReading-" + tid);
             actor.tell(tagReading, ActorRef.noSender());
         }
     }

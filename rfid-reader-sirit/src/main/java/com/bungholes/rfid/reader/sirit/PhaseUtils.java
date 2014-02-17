@@ -1,4 +1,4 @@
-package com.bungholes.rfid.reader.util;
+package com.bungholes.rfid.reader.sirit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

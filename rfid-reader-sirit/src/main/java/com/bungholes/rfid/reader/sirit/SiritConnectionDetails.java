@@ -1,15 +1,15 @@
-package com.bungholes.rfid.reader;
+package com.bungholes.rfid.reader.sirit;
 
-public class ConnectionDetails {
+public class SiritConnectionDetails {
 
     private String ip;
     private String login;
     private String password;
 
-    public ConnectionDetails() {
+    public SiritConnectionDetails() {
     }
 
-    public ConnectionDetails(String ip, String login, String password) {
+    public SiritConnectionDetails(String ip, String login, String password) {
         this.ip = ip;
         this.login = login;
         this.password = password;
@@ -41,7 +41,7 @@ public class ConnectionDetails {
 
     @Override
     public String toString() {
-        return "ConnectionDetails{" +
+        return "SiritConnectionDetails{" +
                 "ip='" + ip + '\'' +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
@@ -53,7 +53,7 @@ public class ConnectionDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ConnectionDetails that = (ConnectionDetails) o;
+        SiritConnectionDetails that = (SiritConnectionDetails) o;
 
         if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
         if (login != null ? !login.equals(that.login) : that.login != null) return false;

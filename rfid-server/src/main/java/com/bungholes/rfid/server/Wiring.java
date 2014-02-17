@@ -3,11 +3,12 @@ package com.bungholes.rfid.server;
 import akka.actor.ActorSystem;
 import com.bungholes.rfid.akka.AkkaTagReadingDispatcher;
 import com.bungholes.rfid.messaging.TagReadingDispatcher;
-import com.bungholes.rfid.reader.ConnectionDetails;
+import com.bungholes.rfid.reader.RfidReaderConnection;
+import com.bungholes.rfid.reader.sirit.SiritConnectionDetails;
 import com.bungholes.rfid.reader.sirit.SiritConnection;
-import com.bungholes.rfid.reader.sirit.SiritEventManager;
-import com.bungholes.rfid.reader.sirit.SiritTagReader;
-import com.bungholes.rfid.reader.util.PhaseUtils;
+import com.bungholes.rfid.reader.sirit.SiritEventSubscriptionManager;
+import com.bungholes.rfid.reader.sirit.SiritTagReportEventListener;
+import com.bungholes.rfid.reader.sirit.PhaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +19,14 @@ public class Wiring {
     public static final String IP_ADDRESS = "192.168.0.109";
     public static String LOGIN = "admin";
     public static String PASSWORD = "readeradmin";
-    public static final ConnectionDetails configuration = new ConnectionDetails(IP_ADDRESS, LOGIN, PASSWORD);
+
+    public static final SiritConnectionDetails configuration = new SiritConnectionDetails(IP_ADDRESS, LOGIN, PASSWORD);
+
     private String actorSystemName = "rfid";
 
     private SiritConnection connection;
-    private SiritEventManager eventManager;
-    private SiritTagReader tagReader;
+    private SiritEventSubscriptionManager eventManager;
+    private SiritTagReportEventListener tagReader;
 
     public Wiring() {
         wire();
@@ -31,25 +34,25 @@ public class Wiring {
 
     private void wire() {
         connection = new SiritConnection(configuration);
-        eventManager = new SiritEventManager(connection);
+        eventManager = new SiritEventSubscriptionManager(connection);
 
         ActorSystem system = ActorSystem.create(actorSystemName);
         TagReadingDispatcher dispatcher = new AkkaTagReadingDispatcher(system);
 
-        tagReader = new SiritTagReader(dispatcher, new PhaseUtils());
+        tagReader = new SiritTagReportEventListener(dispatcher, new PhaseUtils());
 
         LOGGER.debug("wiring complete...");
     }
 
-    public SiritEventManager getEventManager() {
+    public SiritEventSubscriptionManager getEventManager() {
         return eventManager;
     }
 
-    public SiritConnection getConnection() {
+    public RfidReaderConnection getConnection() {
         return connection;
     }
 
-    public SiritTagReader getTagReader() {
+    public SiritTagReportEventListener getTagReader() {
         return tagReader;
     }
 }

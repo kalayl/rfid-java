@@ -5,17 +5,22 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import com.bungholes.rfid.messaging.TagPosition;
 import com.bungholes.rfid.messaging.TagReading;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.math.DoubleMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static com.bungholes.rfid.messaging.TagReading.dateOrdering;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class TagReadingActor extends UntypedActor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TagReadingActor.class);
-    private static final int MAX_BUFFER_SIZE = 1000;
+
+    private static final int MAX_BUFFER_SIZE = 30;
 
     private String tagId;
     private String tid;
@@ -39,13 +44,11 @@ public class TagReadingActor extends UntypedActor {
 
             recordReading(tagReading);
 
-            // if there are enough readings,
-            // move the lists aside, assign new lists,
-            // spawn the position calculator and send the results on
             if (buffersFull()) {
+                archiveBuffers();
+
                 TagPosition tagPosition = calculateTagPosition();
 
-                // send the position on
                 tagPositionActor().tell(tagPosition, getSelf());
             } else {
                 getSender().tell(message, getSelf());
@@ -56,11 +59,9 @@ public class TagReadingActor extends UntypedActor {
     }
 
     private TagPosition calculateTagPosition() {
-        archiveBuffers();
         double position = calculatePosition(antenna1Archive, antenna2Archive);
-        TagPosition tagPosition = new TagPosition(tagId, tid, position);
 
-        return tagPosition;
+        return new TagPosition(tagId, tid, position);
     }
 
     private ActorRef tagPositionActor() {
@@ -73,6 +74,7 @@ public class TagReadingActor extends UntypedActor {
 
     private boolean buffersFull() {
         boolean buffersFull = ((antenna1.size() > MAX_BUFFER_SIZE) && (antenna2.size() > MAX_BUFFER_SIZE));
+
         if (buffersFull) {
             //LOGGER.debug("buffersFull {} {}", antenna1.size(), antenna2.size());
         }
@@ -98,7 +100,7 @@ public class TagReadingActor extends UntypedActor {
         }
 
         if (tagPositionActorName == null) {
-            tagPositionActorName = "tagPosition" + tid;
+            tagPositionActorName = "tagPosition-" + tid;
         }
     }
 
@@ -112,49 +114,62 @@ public class TagReadingActor extends UntypedActor {
 
     private double calculatePosition(List<TagReading> antenna1, List<TagReading> antenna2) {
         List<Float> phaseDifferences = calculatePhaseDifferencesBetweenAntennas(antenna1, antenna2);
+        double phaseDifferenceMean = DoubleMath.mean(phaseDifferences);
 
-        return calculateRelativePositionBasedOnPhaseDifferences(phaseDifferences);
+        return relativePositionFromPhaseDifferenceMean(phaseDifferenceMean);
     }
 
-    private double calculateRelativePositionBasedOnPhaseDifferences(List<Float> phaseDifferences) {
-
-        // average phase difference
-        float averagePhaseDifference = sum(phaseDifferences) / phaseDifferences.size();
-
-        double relativePosition = averagePhaseDifference; //Math.floor((averagePhaseDifference + 90) * 7.6);
-
-        return relativePosition;
+    private double relativePositionFromPhaseDifferenceMean(double phaseDifferenceMean) {
+        ///return Math.floor((phaseDifferenceMean + 90) * 7.6);
+        return phaseDifferenceMean + 90;
     }
 
-    private float sum(List<Float> phaseDifferences) {
-        float sum = 0f;
-        for (Float diff : phaseDifferences) {
-            sum += diff;
-        }
+    private List<Float> calculatePhaseDifferencesBetweenAntennas(
+            List<TagReading> antenna1,
+            List<TagReading> antenna2) {
 
-        return sum;
+        ImmutableList<TagReading> sortedAntenna1 = ImmutableSortedSet.orderedBy(dateOrdering())
+                .addAll(antenna1)
+                .build()
+                .asList();
+
+        ImmutableList<TagReading> sortedAntenna2 = ImmutableSortedSet.orderedBy(dateOrdering())
+                .addAll(antenna2)
+                .build()
+                .asList();
+
+        List<Float> phaseDifferences = calculatePhaseDifferencesBetweenSortedLists(sortedAntenna1, sortedAntenna2);
+
+        return phaseDifferences;
     }
 
-    private List<Float> calculatePhaseDifferencesBetweenAntennas(List<TagReading> antenna1, List<TagReading> antenna2) {
-        List<Float> phaseDifferences = newArrayList();
+    private List<Float> calculatePhaseDifferencesBetweenSortedLists(
+            List<TagReading> antenna1Readings,
+            List<TagReading> antenna2Readings) {
 
-        // calculate the phase difference
-        for (int i = 0; i < antenna1.size(); i++)
-        {
-            if (i < antenna2.size() && i < antenna2.size())
-            {
-                float phaseDifference = antenna2.get(i).getPhaseAngle() - antenna1.get(i).getPhaseAngle();
-                if (Math.abs(phaseDifference) > 90)
-                {
-                    phaseDifference = phaseDifference - ( 180 * Math.signum(phaseDifference));
-                }
+        List<Float> phaseDifferenceResults = newArrayList();
 
+        for (int i = 0; i < antenna1Readings.size(); i++) {
+            if (i < antenna2Readings.size() && i < antenna2Readings.size()) {
+                TagReading tagReading1 = antenna1Readings.get(i);
+                TagReading tagReading2 = antenna2Readings.get(i);
 
-                phaseDifferences.add(phaseDifference);
+                float phaseDifference = calculatePhaseDifferenceBetweenTwoReadings(tagReading1, tagReading2);
+
+                phaseDifferenceResults.add(phaseDifference);
             }
         }
 
+        return phaseDifferenceResults;
+    }
 
-        return phaseDifferences;
+    private float calculatePhaseDifferenceBetweenTwoReadings(TagReading tagReading1, TagReading tagReading2) {
+        float phaseDifference = tagReading2.getPhaseAngle() - tagReading1.getPhaseAngle();
+
+        if (Math.abs(phaseDifference) > 90) {
+            phaseDifference = phaseDifference - ( 180 * Math.signum(phaseDifference));
+        }
+
+        return phaseDifference;
     }
 }

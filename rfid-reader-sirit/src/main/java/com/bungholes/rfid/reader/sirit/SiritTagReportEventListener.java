@@ -2,20 +2,19 @@ package com.bungholes.rfid.reader.sirit;
 
 import com.bungholes.rfid.messaging.TagReadingDispatcher;
 import com.bungholes.rfid.messaging.TagReading;
-import com.bungholes.rfid.reader.util.PhaseUtils;
 import com.sirit.driver.IEventListener;
 import com.sirit.mapping.EventInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SiritTagReader implements IEventListener {
+public class SiritTagReportEventListener implements IEventListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SiritTagReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SiritTagReportEventListener.class);
 
     private TagReadingDispatcher tagReadingDispatcher;
     private final PhaseUtils phaseUtils;
 
-    public SiritTagReader(TagReadingDispatcher tagReadingDispatcher, PhaseUtils phaseUtils) {
+    public SiritTagReportEventListener(TagReadingDispatcher tagReadingDispatcher, PhaseUtils phaseUtils) {
         this.tagReadingDispatcher = tagReadingDispatcher;
         this.phaseUtils = phaseUtils;
     }
@@ -36,6 +35,7 @@ public class SiritTagReader implements IEventListener {
 
             TagReading reading = new TagReading(tagId, antenna, phaseAngle, frequency, rssi, time, tid);
             //LOGGER.debug("TagReading {} ", reading);
+
             if (tagId != null)
             {
                 tagReadingDispatcher.dispatch(reading);
